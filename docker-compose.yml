@@ -158,15 +158,16 @@ services:
       kibana:
         condition: service_healthy
     image: docker.elastic.co/beats/metricbeat:${STACK_VERSION}
+    command: metricbeat -e -strict.perms=false
     user: root
     volumes:
       - certs:/usr/share/metricbeat/certs
       - metricbeatdata01:/usr/share/metricbeat/data
-      - "./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro"
-      - "/proc:/hostfs/proc:ro"
-      - "/:/hostfs:ro"
+      - "./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      - "/sys/fs/cgroup:/hostfs/sys/fs/cgroup:rw"
+      - "/proc:/hostfs/proc:rw"
+      - "/:/hostfs:rw"
     environment:
       - ELASTIC_USER=elastic
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
@@ -179,14 +180,15 @@ services:
       es01:
         condition: service_healthy
     image: docker.elastic.co/beats/filebeat:${STACK_VERSION}
+    command: filebeat -e -strict.perms=false
     user: root
     volumes:
       - certs:/usr/share/filebeat/certs
       - filebeatdata01:/usr/share/filebeat/data
       - "./filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
-      - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro"
-      - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:rw"
+      - "/var/lib/docker/containers:/var/lib/docker/containers:rw"
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
     environment:
       - ELASTIC_USER=elastic
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
@@ -208,7 +210,7 @@ services:
       - certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
       - "./logstash_ingest_data/:/usr/share/logstash/ingest_data/"
-      - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
+      - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:rw"
     environment:
       - xpack.monitoring.enabled=false
       - ELASTIC_USER=elastic
