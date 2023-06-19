@@ -1,8 +1,6 @@
 version: "3.8"
 
 volumes:
-  certs:
-    driver: local
   esdata01:
     driver: local
   kibanadata:
@@ -26,7 +24,7 @@ services:
   setup:
     image: docker.elastic.co/elasticsearch/elasticsearch:${STACK_VERSION}
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
+      - ./certs:/usr/share/elasticsearch/config/certs
     user: "0"
     command: >
       bash -c '
@@ -86,7 +84,7 @@ services:
     labels:
       co.elastic.logs/module: elasticsearch
     volumes:
-      - certs:/usr/share/elasticsearch/config/certs
+      - ./certs:/usr/share/elasticsearch/config/certs
       - esdata01:/usr/share/elasticsearch/data
     ports:
       - ${ES_PORT}:9200
@@ -130,7 +128,7 @@ services:
     labels:
       co.elastic.logs/module: kibana
     volumes:
-      - certs:/usr/share/kibana/config/certs
+      - ./certs:/usr/share/kibana/config/certs
       - kibanadata:/usr/share/kibana/data
     ports:
       - ${KIBANA_PORT}:5601
@@ -166,7 +164,7 @@ services:
     command: metricbeat -e -strict.perms=false
     user: root
     volumes:
-      - certs:/usr/share/metricbeat/certs
+      - ./certs:/usr/share/metricbeat/certs
       - metricbeatdata01:/usr/share/metricbeat/data
       - "./metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
@@ -188,7 +186,7 @@ services:
     command: filebeat -e -strict.perms=false
     user: root
     volumes:
-      - certs:/usr/share/filebeat/certs
+      - ./certs:/usr/share/filebeat/certs
       - filebeatdata01:/usr/share/filebeat/data
       - "./filebeat_ingest_data/:/usr/share/filebeat/ingest_data/"
       - "./filebeat.yml:/usr/share/filebeat/filebeat.yml:rw"
@@ -212,7 +210,7 @@ services:
       co.elastic.logs/module: logstash
     user: root
     volumes:
-      - certs:/usr/share/logstash/certs
+      - ./certs:/usr/share/logstash/certs
       - logstashdata01:/usr/share/logstash/data
       - "./logstash_ingest_data/:/usr/share/logstash/ingest_data/"
       - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:rw"
